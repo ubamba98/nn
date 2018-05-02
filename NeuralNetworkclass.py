@@ -19,7 +19,7 @@ class NeuralNetwork:
         return z*(1-z)
     def gradient(self,d,z):
         return np.dot(z.T,d)
-    def forwordBias(self):
+    def ForwardProp(self):
         a2 = self.Activationfunc(np.dot(self.X,self.theta1))
         a2 = np.append(np.ones(a2.shape[0]).reshape(a2.shape[0], 1),a2, axis=1)
         a3 = self.Activationfunc(np.dot(a2,self.theta2))
@@ -27,7 +27,7 @@ class NeuralNetwork:
         output = self.Activationfunc(np.dot(a3,self.theta3))
         return a2,a3,output
     def Backprob(self):
-        a2,a3,output = self.forwordBias()
+        a2,a3,output = self.ForwardProp()
         del4 = output - self.y
         del3 = np.dot(del4,self.theta3.T) * self.Activationfuncdiff(a3)
         del3 = del3[:,1:]
@@ -35,10 +35,10 @@ class NeuralNetwork:
         del2 = del2[:,1:]
         return del4,del3,del2
     def Cost(self):
-        _,_,output = self.forwordBias(self.X,self.theta1,self.theta2,self.theta3)
+        _,_,output = self.ForwardProp()
         return - 1/self.m * ( np.dot(self.y.T,np.log(output))+np.dot((1-self.y.T),np.log(1-output))+ self.lamb/(2*self.m) * ( np.sum(self.theta2[:,1:]**2)+np.sum(self.theta1[:,1:]**2)+np.sum(self.theta3[:,1:]**2) ) )
     def train_NN(self):
-        a2,a3,output = self.forwordBias()
+        a2,a3,output = self.ForwardProp()
         del4,del3,del2 = self.Backprob()
         self.theta1 = self.theta1 - (self.alpha/self.m * self.gradient(del2,self.X) + self.lamb/self.m * self.theta1)
         self.theta2 = self.theta2 - (self.alpha/self.m * self.gradient(del3,a2) + self.lamb/self.m * self.theta2)
@@ -57,7 +57,7 @@ class Output:
         self.theta3 = theta3
     def Activationfunc(self,z):
         return 1.0/(1.0+np.exp(-1*z))
-    def forwordBias(self):
+    def ForwardProp(self):
         a2 = self.Activationfunc(np.dot(self.X,self.theta1))
         a2 = np.append(np.ones(a2.shape[0]).reshape(a2.shape[0], 1),a2, axis=1)
         a3 = self.Activationfunc(np.dot(a2,self.theta2))
